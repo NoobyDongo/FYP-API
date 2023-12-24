@@ -16,11 +16,26 @@ A system that processes CRUD requests from the client side.
 Simple searching for a single record.
 > **Format:**
 > 
-> [http://localhost:8080/api-server/{table name}?id={record id}]
+> [http://localhost:8080/api-server/{table name}?id={record id}&mode={"full"/"simple":default}]
 
 example:
 
 > [http://localhost:8080/api-server/product?id=1]
+
+expected return:
+```json
+{
+        "id": "1",
+        "price": 9.4324,
+        "name": "Apple",
+        "desc": "A red apple, very sweet, weights around 7kg.",
+        "image": "{...}",
+        "producttype": "1",
+        "origin": "1"
+}
+```
+
+> [http://localhost:8080/api-server/product?id=1&mode="full"]
 
 expected return:
 ```json
@@ -41,6 +56,7 @@ expected return:
 }
 ```
 
+
 [Return to top](#top)
 -----
 
@@ -51,7 +67,7 @@ expected return:
 Advance searching for zero to many records
 > **Format:**
 > 
-> [http://localhost:8080/api-server/{table name}]
+> [http://localhost:8080/api-server/{table name}?mode={"full"/"simple":default}]
 > 
 > **Body[^PutNote1]:**
 > 
@@ -121,7 +137,7 @@ expected return:
 Insert/update one to many records.
 > **Format:**
 > 
-> [http://localhost:8080/api-server/{table name}]
+> [http://localhost:8080/api-server/{table name}&mode={"full"/"simple":default}][^PostNote2]
 > 
 > **Body[^PostNote1]:**
 > 
@@ -142,6 +158,7 @@ Insert/update one to many records.
 > ```
 
 [^PostNote1]: In POST requests, records with id will ovewrite the exixiting ones. Meanwhile records without id will be inserted.
+[^PostNote2]: In POST requests, the "mode" parameter only controls the return value.
 
 example:
 
