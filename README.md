@@ -165,10 +165,8 @@ example:
 >           "name": "Local Banana",
 >           "desc": "A banana, very sweet, weights around 1kg.",
 >           "image": "{...}",
->           "producttype": "1"
->           "origin": {
->               "name": "Hong Kong"
->           }
+>           "producttype": "1",
+>           "origin": "1"
 >   }
 > ]
 > ```
