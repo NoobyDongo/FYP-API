@@ -5,9 +5,12 @@
 package api.db;
 
 import api.bean.AbstractBean;
+import api.bean.ProductBean;
 import api.bean.TextBean;
 import api.bean.TranslatedTextBean;
 import api.util.SQLPair;
+import oracle.net.aso.e;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -77,8 +80,8 @@ public abstract class AbstractDB<T extends AbstractBean> {
         }
 
         public Helper() throws SQLException {
-            cnnct = getConnection();  // the connection 
-            st = cnnct.createStatement();  // create statement
+            cnnct = getConnection(); // the connection
+            st = cnnct.createStatement(); // create statement
         }
 
         public void execute(String sql) throws SQLException {
@@ -150,7 +153,7 @@ public abstract class AbstractDB<T extends AbstractBean> {
 
     private Connection getConnection() throws SQLException {
         try {
-            //System.setProperty("jdbc.drivers", "com.mysql.jdbc.Driver");
+            // System.setProperty("jdbc.drivers", "com.mysql.jdbc.Driver");
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException ex) {
             System.out.println(ex);
@@ -162,22 +165,49 @@ public abstract class AbstractDB<T extends AbstractBean> {
         TextBean bean = new TextBean();
         textHelper.executeQuery(sql, param);
         if (textHelper.rs.next()) {
-            bean = new TextBean(textHelper.rs.getString("id"), textHelper.rs.getString("desc"));
+            bean = new TextBean(textHelper.rs.getString("id"), textHelper.rs.getString("name"));
         }
 
-        if (fullInfo) {
-            String newSql = "select `languageid`, `desc` from text_language where `textid` = ?";
-            textHelper.executeQuery(newSql, param[0]);
-            while (textHelper.rs.next()) {
-                bean.translation.add(new TranslatedTextBean(textHelper.rs.getString("languageid"), textHelper.rs.getString("desc")));
-            }
-        }
         textHelper.closePreparedStatement();
         return bean;
     }
 
     public final TextBean getText(boolean allInfo, String id) throws SQLException {
-        String sql = "select * from `text` where `id` = ?";
+        String sql = "select * from `product` where `id` = ?";
+        return _getText(sql, allInfo, id);
+    }
+
+    public final TextBean getOText(boolean allInfo, String id) throws SQLException {
+        String sql = "SELECT product.originid as id, origin.name  FROM product JOIN origin ON product.originid = origin.id WHERE product.id = ?;";
+        return _getText(sql, allInfo, id);
+    }
+
+    public final TextBean getPText(boolean allInfo, String id) throws SQLException {
+        String sql = "SELECT product.producttypeid as id, producttype.name  FROM product JOIN producttype ON product.producttypeid = producttype.id WHERE product.id = ?;";
+        return _getPText(sql, allInfo, id);
+    }
+
+    private TextBean _getPText(String sql, boolean fullInfo, String... param) throws SQLException {
+        TextBean bean = new TextBean();
+
+        // Execute the first query
+        textHelper.executeQuery(sql, param);
+
+        // Check if there are any rows in the result set
+        if (textHelper.rs.next()) {
+            // Retrieve data from the result set
+            bean = new TextBean(textHelper.rs.getString("id"), textHelper.rs.getString("name"));
+
+        }
+
+        // Close the statement
+        textHelper.closePreparedStatement();
+
+        return bean;
+    }
+
+    public final TextBean getPTText(boolean allInfo, String id) throws SQLException {
+        String sql = "select * from `product` where `id` = ?";
         return _getText(sql, allInfo, id);
     }
 
@@ -186,7 +216,13 @@ public abstract class AbstractDB<T extends AbstractBean> {
         return _getText(sql, allInfo, id, languageId);
     }
 
-    private TextBean _setText(String sql, String subSql, TextBean bean, ProductDB.Action<String[], String[]> action, String... param) throws SQLException {
+    public final TextBean getPText(boolean allInfo, String id, String languageId) throws SQLException {
+        String sql = "SELECT product.producttypeid as id, tl.desc FROM text_language tl JOIN text t ON tl.textid = t.id JOIN producttype pt ON t.id = pt.name JOIN product p ON pt.id = p.producttypeid WHERE p.producttypeid = 1;";
+        return _getPText(sql, allInfo, id, languageId);
+    }
+
+    private TextBean _setText(String sql, TextBean bean, ProductDB.Action<String[], String[]> action,
+            String... param) throws SQLException {
         textHelper.executeUpdate(sql, param);
         if (textHelper.rowCount < 1) {
             throw new SQLException();
@@ -197,33 +233,56 @@ public abstract class AbstractDB<T extends AbstractBean> {
             bean.id = id;
         }
 
-        textHelper.newPreparedStatement(subSql);
-        for (var e : bean.translation) {
-            textHelper.fillPreparedStatement(action.run(new String[]{bean.id, e.languageId, e.desc}));
-            textHelper.executeUpdate();
-        }
+        // textHelper.newPreparedStatement(subSql);
+        /*
+         * for (var e : bean.translation) {
+         * textHelper.fillPreparedStatement(action.run(new String[] { bean.id,
+         * e.languageId, e.desc }));
+         * textHelper.executeUpdate();
+         * }
+         */
         textHelper.closePreparedStatement();
         return bean;
     }
 
     public final TextBean updateText(TextBean bean) throws SQLException {
         String sql = "update `text` set `desc` = ? where id = ?";
-        String subSql = "update text_language set `desc` = ? where textid = ? and languageid = ?";
         ProductDB.Action a = (ProductDB.Action<String[], String[]>) ((s) -> {
-            return new String[]{s[2], s[0], s[1]
+            return new String[] { s[2], s[0], s[1]
             };
         });
-        return _setText(sql, subSql, bean, a, bean.desc, bean.id);
+        return _setText(sql, bean, a, bean.desc, bean.id);
     }
 
     public final TextBean createText(TextBean bean) throws SQLException {
         String sql = "insert into text values(default, ?)";
-        String subSql = "insert into text_language values(?, ?, ?)";
         ProductDB.Action a = (ProductDB.Action<String[], String[]>) ((s) -> {
-            return new String[]{s[0], s[1], s[2]
+            return new String[] { s[0], s[1], s[2]
+            };
+
+        });
+        // System.out.println(bean.desc);
+        return _setText(sql, bean, a, bean.desc, bean.id);
+
+    }
+
+    public final TextBean createOText(TextBean bean) throws SQLException {
+        String sql = "insert into origin values(default, ?)";
+        ProductDB.Action a = (ProductDB.Action<String[], String[]>) ((s) -> {
+            return new String[] { s[0], s[1], s[2]
             };
         });
-        return _setText(sql, subSql, bean, a, bean.desc, bean.id);
+        return _setText(sql, bean, a, bean.desc, bean.id);
+
+    }
+
+    public final TextBean createPText(TextBean bean) throws SQLException {
+        String sql = "insert into producttype values(default, ?)";
+        ProductDB.Action a = (ProductDB.Action<String[], String[]>) ((s) -> {
+            return new String[] { s[0], s[1], s[2]
+            };
+        });
+        return _setText(sql, bean, a, bean.desc, bean.id);
 
     }
 
@@ -253,13 +312,14 @@ public abstract class AbstractDB<T extends AbstractBean> {
         return null;
     }
 
-    protected abstract ArrayList<T> _query(String language, boolean allInfo, SQLPair... pairs);
+    protected abstract ArrayList<T> _query(boolean allInfo, SQLPair... pairs);
 
-    public final T queryById(String language, boolean allInfo, String id) {
-        return _query(language, allInfo, new SQLPair("id", id)).get(0);
+    public final T queryById(boolean allInfo, String id) {
+        return _query(allInfo, new SQLPair("id", id)).get(0);
     }
 
-    public final ArrayList<T> queryByColumns(String language, boolean allInfo, SQLPair... pairs) {
-        return _query(language, allInfo, pairs);
+    public final ArrayList<T> queryByColumns(boolean allInfo, SQLPair... pairs) {
+        return _query(allInfo, pairs);
     }
+
 }

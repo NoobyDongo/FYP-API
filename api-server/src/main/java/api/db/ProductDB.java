@@ -5,6 +5,7 @@
 package api.db;
 
 import api.bean.ProductBean;
+import api.bean.TextBean;
 import api.util.SQLPair;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Ison Ho
  */
-public class ProductDB extends AbstractDB<ProductBean>{
+public class ProductDB extends AbstractDB<ProductBean> {
 
     public ProductDB(String url, String uname, String pwd) throws SQLException {
         super(url, uname, pwd);
@@ -22,12 +23,19 @@ public class ProductDB extends AbstractDB<ProductBean>{
 
     @Override
     protected ProductBean _create(ProductBean bean) {
-        String sql = "insert into product values(default, ?, ?, ?)";
+        String sql = "insert into product values(default, ?, ?, ?,?,?,?)";
         try {
-            String name = createText(bean._name).id;
-            String desc = createText(bean._desc).id;
-            
-            helper.executeUpdate(sql, name, desc, bean.price + "");
+            String name = bean.name;
+            String desc = bean.desc;
+            String producttype = Double.toString(bean.producttype);
+            String origin = Double.toString(bean.origin);
+            // String name = createText(bean._name).id;
+            // String desc = createText(bean._desc).id;
+
+            // String producttypeid = createText(bean._producttypeid).id;
+            // String originid = createText(bean._originid).id;
+            String price = Double.toString(bean.price);
+            helper.executeUpdate(sql, name, desc, price, "", producttype, origin + "");
             bean.id = helper.getGeneratedKeys() + "";
             helper.closePreparedStatement();
 
@@ -39,15 +47,11 @@ public class ProductDB extends AbstractDB<ProductBean>{
 
     @Override
     protected ProductBean _update(ProductBean bean) {
-        String sql = "update product set `price` = ? where id = ?";
+        String sql = "update product set `price` = ? , `name` = ? , `desc` = ? ,`producttypeid` = ? , `originid` = ?  where id = ?";
         try {
-            if (bean._name.id == null || bean._desc.id == null) {
-                throw new SQLException();
-            }
-            updateText(bean._name);
-            updateText(bean._desc);
 
-            helper.executeUpdate(sql, bean.price + "", bean.id);
+            helper.executeUpdate(sql, bean.price + "", bean.name, bean.desc, bean.producttype + "", bean.origin + "",
+                    bean.id);
             helper.closePreparedStatement();
 
             if (helper.rowCount < 1) {
@@ -58,9 +62,9 @@ public class ProductDB extends AbstractDB<ProductBean>{
         }
         return bean;
     }
-    
+
     @Override
-    protected ArrayList<ProductBean> _query(String language, boolean allInfo, SQLPair... param){
+    protected ArrayList<ProductBean> _query(boolean allInfo, SQLPair... param) {
         ArrayList<ProductBean> list = new ArrayList();
         String sql = helper.fillSqlCommand("select * from `product`", param);
 
@@ -69,24 +73,27 @@ public class ProductDB extends AbstractDB<ProductBean>{
             while (helper.rs.next()) {
                 ProductBean bean = new ProductBean();
                 bean.fill(helper.rs);
-                String name = helper.rs.getString("name");
-                String desc = helper.rs.getString("desc");
+                // String name = helper.rs.getString("name");
+                // String desc = helper.rs.getString("desc");
+                String producttypeid = helper.rs.getString("producttypeid");//
+                String originid = helper.rs.getString("originid");//
 
-                if (language != null) {
-                    bean._desc = getText(allInfo, desc, language);
-                    bean._name = getText(allInfo, name, language);
-                } else {
-                    bean._desc = getText(allInfo, desc);
-                    bean._name = getText(allInfo, name);
-                }
+                // bean._desc = getText(allInfo, desc);
+                // bean._name = getText(allInfo, name);
+                bean._producttypeid = getPText(allInfo, producttypeid);//
+                bean._originid = getOText(allInfo, originid);//
+
                 list.add(bean);
             }
             helper.closePreparedStatement();
 
-        } catch (SQLException e) {
+        } catch (
+
+        SQLException e) {
             System.out.println(e);
         }
 
         return list;
     }
+
 }
