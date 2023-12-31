@@ -1,0 +1,8 @@
+31/12/2023
+to do:
+login login
+authentication
+make DTO for product
+done:
+switched to using spring to save time
+functional product, producttype and origin
