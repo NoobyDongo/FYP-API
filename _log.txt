@@ -6,3 +6,10 @@ make DTO for product
 done:
 switched to using spring to save time
 functional product, producttype and origin
+
+1/1/2024
+to do:
+login login
+authentication
+done:
+there is now simple mode for product which returns foreign key unstead of the whole object

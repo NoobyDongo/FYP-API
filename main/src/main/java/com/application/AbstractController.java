@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.application;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
@@ -15,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- *
- * @author Ison Ho
  * @param <R>
  * @param <E>
  */
@@ -25,20 +20,23 @@ public abstract class AbstractController<R extends CrudRepository<E, Integer>, E
 
     @Autowired
     private R repository;
-    
+
     @GetMapping("/{id}")
-    public @ResponseBody E getById(@PathVariable("id") int id){
+    public @ResponseBody
+    E getById(@PathVariable("id") int id) {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException());
     }
-    
+
     @PostMapping(path = "/add")
-    public @ResponseBody String add(@RequestBody E e) {
+    public @ResponseBody
+    String add(@RequestBody E e) {
         repository.save(e);
         return "Saved";
     }
 
     @GetMapping(path = "/all")
-    public @ResponseBody Iterable<E> getAll() {
+    public @ResponseBody
+    Iterable<E> getAll() {
         return repository.findAll();
     }
 }

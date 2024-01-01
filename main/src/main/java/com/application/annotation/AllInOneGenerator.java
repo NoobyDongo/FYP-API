@@ -8,5 +8,6 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.TYPE})
 @Retention(value = RetentionPolicy.SOURCE)
 public @interface AllInOneGenerator {
+
     public String staticConstructor() default "";
 }

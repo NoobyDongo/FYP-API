@@ -19,7 +19,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 //thx to https://stackoverflow.com/a/30199085
-
 @SupportedAnnotationTypes("com.application.ALLInOneGenerator")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class AllInOneProcessor extends AbstractProcessor {
@@ -31,7 +30,7 @@ public class AllInOneProcessor extends AbstractProcessor {
         super.init(processingEnv);
         elements = processingEnv.getElementUtils();
     }
-    
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(AllInOneGenerator.class)) {
@@ -77,5 +76,5 @@ public class AllInOneProcessor extends AbstractProcessor {
         }
         return true;
     }
-*/
+     */
 }
