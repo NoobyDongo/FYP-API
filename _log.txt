@@ -13,3 +13,13 @@ login login
 authentication
 done:
 there is now simple mode for product which returns foreign key unstead of the whole object
+
+3/1/2024
+to do:
+login login
+authentication
+done:
+fixed an issue where posting in simple mode will get a record with full detail
+delete is now an option
+switched to using IDENTITY as the generation strategy, removing the seq tables and huge gaps between records' ids
+put title to command prompt, increasing the speed for spotting the correct command prompt

@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @NoArgsConstructor
 public class ProductType{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
 
@@ -29,4 +29,4 @@ public class ProductType{
 @RequestMapping(path = "/producttype")
 class ProductTypeController extends AbstractController<ProductTypeRepository, ProductType>{}
 
-interface ProductTypeRepository extends CrudRepository<ProductType, Integer>{}
+interface ProductTypeRepository extends JpaRepository<ProductType, Integer>{}
