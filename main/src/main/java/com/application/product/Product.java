@@ -2,17 +2,19 @@ package com.application.product;
 
 import com.application.AbstractSummaryController;
 import com.application.AbstractSummaryEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,9 +48,10 @@ public class Product {
     @Column(nullable = false)
     private double price;
 
-    @Column(columnDefinition="LONGTEXT")
-    private String image;
-
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "product_id")
+    private List<ProductImage> image;
+    
     @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -66,7 +69,8 @@ public class Product {
 class ProductSummary extends AbstractSummaryEntity<Product> {
 
     private Integer id;
-    private String name, desc, image;
+    private String name, desc;
+    private List<ProductImage> image;
     private double price;
     private Integer productType, origin;
 
