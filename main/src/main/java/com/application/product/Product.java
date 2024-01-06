@@ -50,7 +50,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_id")
-    private List<ProductImage> image;
+    private List<ProductImage> images;
     
     @NotNull
     @ManyToOne
@@ -70,7 +70,7 @@ class ProductSummary extends AbstractSummaryEntity<Product> {
 
     private Integer id;
     private String name, desc;
-    private List<ProductImage> image;
+    private List<ProductImage> images;
     private double price;
     private Integer productType, origin;
 
@@ -78,7 +78,7 @@ class ProductSummary extends AbstractSummaryEntity<Product> {
         this.id = p.getId();
         this.name = p.getName();
         this.desc = p.getDesc();
-        this.image = p.getImage();
+        this.images = p.getImages();
         this.price = p.getPrice();
         this.productType = p.getProductType().getId();
         this.origin = p.getOrigin().getId();
@@ -86,7 +86,7 @@ class ProductSummary extends AbstractSummaryEntity<Product> {
 
     @Override
     public Product mapTo() {
-        return new Product(id, name, desc, price, image, new ProductType(this.productType), new Origin(this.origin));
+        return new Product(id, name, desc, price, images, new ProductType(this.productType), new Origin(this.origin));
     }
 }
 
