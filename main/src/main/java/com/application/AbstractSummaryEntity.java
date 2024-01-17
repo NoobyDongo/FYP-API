@@ -3,6 +3,6 @@ package com.application;
 /**
  * @param <T>
  */
-public abstract class AbstractSummaryEntity<T> {
-    public abstract T mapTo();
+public interface AbstractSummaryEntity<T> {
+    public T mapTo();
 }

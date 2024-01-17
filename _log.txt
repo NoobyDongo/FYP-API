@@ -30,3 +30,13 @@ login login
 authentication
 done:
 product can now own many images
+
+11/1/2024
+done:
+unlocked pgae option when getting records
+
+17/1/2024
+done:
+introduced Abstraction to entities and repositories
+modified command script files, so that the sql server will also be started when starting the server
+

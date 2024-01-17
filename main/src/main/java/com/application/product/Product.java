@@ -1,13 +1,13 @@
 package com.application.product;
 
+import com.application.AbstractNamedEntity;
+import com.application.AbstractRepostory;
 import com.application.AbstractSummaryController;
 import com.application.AbstractSummaryEntity;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -19,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -27,16 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @NotNull
-    @Size(min = 1)
-    @Column(nullable = false)
-    private String name;
+public class Product extends AbstractNamedEntity<Integer> {
 
     @NotNull
     @Size(min = 1)
@@ -51,7 +41,7 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_id")
     private List<ProductImage> images;
-    
+
     @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -61,12 +51,23 @@ public class Product {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Origin origin;
+
+    public Product(Integer id, String name, String desc, double price, List<ProductImage> images, ProductType productType, Origin origin) {
+        super(id, name);
+        this.desc = desc;
+        this.price = price;
+        this.images = images;
+        this.productType = productType;
+        this.origin = origin;
+    }
+    
+    
 }
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-class ProductSummary extends AbstractSummaryEntity<Product> {
+class ProductSummary implements AbstractSummaryEntity<Product> {
 
     private Integer id;
     private String name, desc;
@@ -100,5 +101,5 @@ class ProductController extends AbstractSummaryController<ProductRepository, Pro
     }
 }
 
-interface ProductRepository extends JpaRepository<Product, Integer> {
+interface ProductRepository extends AbstractRepostory<Product, Integer> {
 }

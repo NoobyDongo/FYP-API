@@ -1,28 +1,19 @@
 package com.application.product;
 
 import com.application.AbstractController;
+import com.application.AbstractNamedEntity;
+import com.application.AbstractRepostory;
+
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Data
 @Entity
 @NoArgsConstructor
-public class Origin {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-
+public class Origin extends AbstractNamedEntity<Integer>{
     public Origin(Integer id) {
-        this.id = id;
+        super(id);
     }
 }
 
@@ -31,5 +22,5 @@ public class Origin {
 class OriginController extends AbstractController<OriginRepository, Origin> {
 }
 
-interface OriginRepository extends JpaRepository<Origin, Integer> {
+interface OriginRepository extends AbstractRepostory<Origin, Integer> {
 }
