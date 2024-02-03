@@ -21,12 +21,12 @@ if "%1"=="prod" (
 )
 
 :PROD
-echo Starting API Server (production)
+title Starting API Server (production)
 call java -jar build/libs/fyp-0.1.0.jar
 GOTO END
 
 :DEV
-echo Starting API Server (development)
+title Starting API Server (development)
 call ./gradlew bootRun
 GOTO END
 

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Id {
+public class Id<ID> {
 
-    private Integer id;
+    private ID id;
 }

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -15,13 +14,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @param <E>
  * @param <DTO>
  */
-public abstract class AbstractSummaryController<R extends AbstractRepostory<E, Integer>, E, DTO extends AbstractSummaryEntity<E>>
-        extends AbstractController<R, E> {
+public abstract class AbstractSummaryController<R extends AbstractRepostory<E, ID>, E, ID, DTO extends AbstractSummaryEntity<E>>
+        extends AbstractController<R, E, ID> {
 
     protected abstract DTO buildDTO(E entity);
 
     @GetMapping("/{id}/simple")
-    public @ResponseBody DTO getByIdSimple(@PathVariable("id") int id) {
+    public @ResponseBody DTO getByIdSimple(@PathVariable("id") ID id) {
         return buildDTO(getById(id));
     }
 
@@ -36,8 +35,8 @@ public abstract class AbstractSummaryController<R extends AbstractRepostory<E, I
         return StreamSupport.stream(getAll().spliterator(), false).map(this::buildDTO).collect(Collectors.toList());
     }
 
-    @GetMapping(path = "/range/simple")
-    public @ResponseBody Page<DTO> getRangeSimple(@RequestParam int page, @RequestParam int size) {
-        return getRange(page, size).map(this::buildDTO);
+    @PostMapping(path = "/search/simple")
+    public @ResponseBody Page<DTO> searchSimple(@RequestBody SearchDto body) {
+        return search(body).map(this::buildDTO);
     }
 }
