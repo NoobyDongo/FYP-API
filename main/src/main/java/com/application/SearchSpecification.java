@@ -35,6 +35,9 @@ public class SearchSpecification<E> implements Specification<E> {
         } else {
             key = root.<String>get(searchCriteria.getFilterKey());
         }
+        if (strToSearch.isEmpty()) {
+            key = key.as(String.class);
+        }
 
         switch (Objects.requireNonNull(SearchOperation.getSimpleOperation(searchCriteria.getOperation()))) {
             case CONTAINS -> {
@@ -91,17 +94,19 @@ public class SearchSpecification<E> implements Specification<E> {
             }
 //.....
             //.....
+            // .....
         }
     }
     /*
-    private Expression<String> join(Root<E> root, SearchCriteria searchCriteria) {
-        if (key.equals("deptName")) {
-            Join<E, Department> j = root.join("department");
-            return j.<String>get(key);
-        }
-    }     private Join<Employee,Department> departmentJoin(Root<Employee>  
-                                       root){
-            return root.join("department");
-     }
+     * private Expression<String> join(Root<E> root, SearchCriteria searchCriteria)
+     * {
+     * if (key.equals("deptName")) {
+     * Join<E, Department> j = root.join("department");
+     * return j.<String>get(key);
+     * }
+     * } private Join<Employee,Department> departmentJoin(Root<Employee>
+     * root){
+     * return root.join("department");
+     * }
      */
 }
