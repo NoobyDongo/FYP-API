@@ -7,6 +7,7 @@ The current build requires JDK 17 to compile. Run ```java -version``` to check.
 Make sure of the followings before you run the server:
 
 - change the `sqlpath.txt` to the directory containing the `mysql_start.bat` and `mysql_stop.bat`
+
 - make sure you have a MySQL database named accordingly to the Spring config in `FYP-API\main\src\main\resources\application.properties`
 
 If your current JDK version is not 17, do the followings:
