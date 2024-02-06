@@ -18,10 +18,10 @@ If your current JDK version is not 17, do the followings:
 3. Run ```java -version``` on a **newly opened** command prompt
    
    The result should be like: ```java version "17.X.X" 2023-01-17 LTS```. If not, change the PATH variable as well:
-   > ADD the directory of JDK 17, eg: C:\Program Files\Java\jdk-17, and move it above the default java path, eg: C:\ProgramData\Oracle\Java\javapath
+   > Add the directory of JDK 17, eg: C:\Program Files\Java\jdk-17, and move it above the default java path, eg: C:\ProgramData\Oracle\Java\javapath
 
    If that doesn't work, try:
   
-   > Replace the default java path, eg: C:\ProgramData\Oracle\Java\javapath, with the directory of JDK 17, eg: C:\Program Files\Java\jdk-17
+   > Replacing the default java path, eg: C:\ProgramData\Oracle\Java\javapath, with the directory of JDK 17, eg: C:\Program Files\Java\jdk-17
 
 4. Done! You can now start the api serve
